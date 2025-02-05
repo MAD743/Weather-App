@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() {
   runApp(const WeatherApp());
@@ -49,6 +50,16 @@ class _TabsDemoState extends State<TabsDemo>
   String city = "Enter city";
   String temperature = "--";
   String description = "--";
+  final Random _random = Random();
+
+  void fetchWeather() {
+    setState(() {
+      city = _cityController.text;
+      temperature = "${15 + _random.nextInt(16)}°C";
+      List<String> conditions = ["Sunny", "Cloudy", "Rainy"];
+      description = conditions[_random.nextInt(conditions.length)];
+    });
+  }
 
   @override
   String get restorationId => 'tabs_demo';
@@ -112,18 +123,12 @@ class _TabsDemoState extends State<TabsDemo>
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      city = _cityController.text;
-                      temperature = "--";
-                      description = "Fetching...";
-                    });
-                  },
+                  onPressed: fetchWeather,
                   child: const Text("Fetch Weather"),
                 ),
                 const SizedBox(height: 20),
                 Text("City: $city", style: const TextStyle(fontSize: 20)),
-                Text("Temperature: $temperature°C",
+                Text("Temperature: $temperature",
                     style: const TextStyle(fontSize: 20)),
                 Text("Condition: $description",
                     style: const TextStyle(fontSize: 20)),
