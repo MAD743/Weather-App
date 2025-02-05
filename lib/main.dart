@@ -45,6 +45,10 @@ class _TabsDemoState extends State<TabsDemo>
     with SingleTickerProviderStateMixin, RestorationMixin {
   late TabController _tabController;
   final RestorableInt tabIndex = RestorableInt(0);
+  final TextEditingController _cityController = TextEditingController();
+  String city = "Enter city";
+  String temperature = "--";
+  String description = "--";
 
   @override
   String get restorationId => 'tabs_demo';
@@ -74,6 +78,7 @@ class _TabsDemoState extends State<TabsDemo>
   void dispose() {
     _tabController.dispose();
     tabIndex.dispose();
+    _cityController.dispose();
     super.dispose();
   }
 
@@ -92,19 +97,53 @@ class _TabsDemoState extends State<TabsDemo>
       body: TabBarView(
         controller: _tabController,
         children: [
-          for (final tab in tabs)
-            Center(
-              child: Text('Content for $tab tab'),
+          // Current Weather Tab
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextField(
+                  controller: _cityController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Enter City",
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      city = _cityController.text;
+                      temperature = "--";
+                      description = "Fetching...";
+                    });
+                  },
+                  child: const Text("Fetch Weather"),
+                ),
+                const SizedBox(height: 20),
+                Text("City: $city", style: const TextStyle(fontSize: 20)),
+                Text("Temperature: $temperature°C",
+                    style: const TextStyle(fontSize: 20)),
+                Text("Condition: $description",
+                    style: const TextStyle(fontSize: 20)),
+              ],
             ),
+          ),
+          // Forecast Tab Placeholder
+          const Center(child: Text('Forecast Tab Content')),
+          // Settings Tab Placeholder
+          Center(
+            child: FloatingActionButton(
+              onPressed: () => widget.changeTheme(
+                Theme.of(context).brightness == Brightness.dark
+                    ? ThemeMode.light
+                    : ThemeMode.dark,
+              ),
+              child: const Icon(Icons.brightness_6),
+            ),
+          ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => widget.changeTheme(
-          Theme.of(context).brightness == Brightness.dark
-              ? ThemeMode.light
-              : ThemeMode.dark,
-        ),
-        child: const Icon(Icons.brightness_6),
       ),
     );
   }
