@@ -51,6 +51,7 @@ class _TabsDemoState extends State<TabsDemo>
   String temperature = "--";
   String description = "--";
   final Random _random = Random();
+  List<Map<String, String>> weeklyForecast = [];
 
   void fetchWeather() {
     setState(() {
@@ -60,6 +61,18 @@ class _TabsDemoState extends State<TabsDemo>
       temperature = "${15 + _random.nextInt(16)}°C";
       List<String> conditions = ["Sunny", "Cloudy", "Rainy"];
       description = conditions[_random.nextInt(conditions.length)];
+    });
+  }
+
+  void fetchWeeklyForecast() {
+    setState(() {
+      weeklyForecast = List.generate(7, (index) {
+        return {
+          "day": "Day ${index + 1}",
+          "temperature": "${15 + _random.nextInt(16)}°C",
+          "condition": ["Sunny", "Cloudy", "Rainy"][_random.nextInt(3)],
+        };
+      });
     });
   }
 
@@ -97,7 +110,7 @@ class _TabsDemoState extends State<TabsDemo>
 
   @override
   Widget build(BuildContext context) {
-    final tabs = ['Current Weather', 'Forecast', 'Settings'];
+    final tabs = ['Current Weather', '7-Day Forecast', 'Settings'];
 
     return Scaffold(
       appBar: AppBar(
@@ -151,8 +164,32 @@ class _TabsDemoState extends State<TabsDemo>
               ],
             ),
           ),
-          // Forecast Tab Placeholder
-          const Center(child: Text('Forecast Tab Content')),
+          // 7-Day Forecast Tab
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: fetchWeeklyForecast,
+                  child: const Text("Fetch 7-Day Forecast"),
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: weeklyForecast.length,
+                    itemBuilder: (context, index) {
+                      final dayForecast = weeklyForecast[index];
+                      return ListTile(
+                        title: Text(dayForecast["day"]!),
+                        subtitle: Text(
+                            "Temp: ${dayForecast["temperature"]!}, ${dayForecast["condition"]!}"),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           // Settings Tab Placeholder
           Center(
             child: FloatingActionButton(
