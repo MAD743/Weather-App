@@ -54,7 +54,9 @@ class _TabsDemoState extends State<TabsDemo>
 
   void fetchWeather() {
     setState(() {
-      city = _cityController.text;
+      city = _cityController.text.isNotEmpty
+          ? _cityController.text
+          : "Unknown City";
       temperature = "${15 + _random.nextInt(16)}°C";
       List<String> conditions = ["Sunny", "Cloudy", "Rainy"];
       description = conditions[_random.nextInt(conditions.length)];
@@ -116,7 +118,7 @@ class _TabsDemoState extends State<TabsDemo>
               children: [
                 TextField(
                   controller: _cityController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "Enter City",
                   ),
@@ -127,11 +129,25 @@ class _TabsDemoState extends State<TabsDemo>
                   child: const Text("Fetch Weather"),
                 ),
                 const SizedBox(height: 20),
-                Text("City: $city", style: const TextStyle(fontSize: 20)),
-                Text("Temperature: $temperature",
-                    style: const TextStyle(fontSize: 20)),
-                Text("Condition: $description",
-                    style: const TextStyle(fontSize: 20)),
+                Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Text("City: $city",
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 10),
+                        Text("Temperature: $temperature",
+                            style: const TextStyle(fontSize: 18)),
+                        const SizedBox(height: 10),
+                        Text("Condition: $description",
+                            style: const TextStyle(fontSize: 18)),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
